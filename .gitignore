@@ -1,0 +1,31 @@
+# Entorno virtual
+venv/
+env/
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+
+# Base de datos local
+db.sqlite3
+
+# Archivos de configuración local
+*.env
+
+# Archivos de logs
+*.log
+
+# Archivos temporales
+*.swp
+*.bak
+*.tmp
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Carpeta de medios (si usás media para imágenes subidas)
+media/
+
+# Archivos de migración innecesarios (opcional)
+*/migrations/__pycache__/

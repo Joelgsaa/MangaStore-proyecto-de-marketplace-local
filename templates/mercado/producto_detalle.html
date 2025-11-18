@@ -1,0 +1,54 @@
+{% extends 'mercado/base.html' %}
+{% block content %}
+<!-- Tu contenido aquí -->
+
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <img src="{{ producto.imagen.url }}" class="img-fluid rounded shadow-sm" alt="{{ producto.titulo }}">
+    </div>
+
+    <div class="col-md-8">
+      <h2 class="mb-3">{{ producto.titulo }}</h2>
+
+      <h5 class="text-muted">📖 Descripción</h5>
+      <p class="mb-4" style="white-space: pre-line;">{{ producto.descripcion }}</p>
+
+      <h5 class="text-muted">👥 Demografía</h5>
+      <p>{{ producto.demografia }}</p>
+
+      <h5 class="text-muted">💰 Precio</h5>
+      <p class="fw-bold text-success fs-5">${{ producto.precio }}</p>
+
+      <form method="POST" action="{% url 'agregar_al_carrito' producto.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+      </form>
+    <!-- Botón para pagar con Mercado Pago -->
+      <button onclick="pagar('{{ producto.id }}')" class="btn btn-success w-100">Comprar con Mercado Pago</button>
+    </div>
+  </div>
+</div>
+
+<!-- SDK + Script de Mercado Pago -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script>
+  const mp = new MercadoPago("TU_PUBLIC_KEY", {
+    locale: 'es-AR'
+  });
+
+  function pagar(productoId) {
+    fetch(`/crear_preferencia/${productoId}/`)
+      .then(response => response.json())
+      .then(data => {
+        mp.checkout({
+          preference: {
+            id: data.id
+          },
+          autoOpen: true,
+        });
+      });
+  }
+</script>
+{% endblock %}

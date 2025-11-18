@@ -1,0 +1,12 @@
+{% extends 'mercado/base.html' %}
+{% block content %}
+<!-- Tu contenido aquí -->
+
+
+<h2>Registrarse</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Crear cuenta</button>
+</form>
+{% endblock %}

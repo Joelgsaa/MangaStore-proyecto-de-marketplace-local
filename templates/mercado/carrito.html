@@ -1,0 +1,30 @@
+{% extends "mercado/base.html" %}
+{% block content %}
+
+<h2>Tu carrito</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Acción</th> 
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.producto.nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.producto.precio }}</td>
+            <td>
+                <a href="{% url 'eliminar_del_carrito' item.producto.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p><strong>Total:</strong> ${{ total }}</p>
+
+{% endblock %}

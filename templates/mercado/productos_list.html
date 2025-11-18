@@ -1,0 +1,41 @@
+{% extends "mercado/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    {% for producto in productos %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <!-- Imagen portada ajustada -->
+        <img src="{{ producto.imagen.url }}" class="card-img-top img-fluid" style="max-height: 300px; object-fit: contain; background-color: #f8f9fa;">
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ producto.titulo }}</h5>
+          <p class="card-text">{{ producto.detalle }}</p>
+          <p class="card-text fw-bold text-success">${{ producto.precio }}</p>
+
+          <!-- Botones alineados abajo -->
+          <div class="mt-auto">
+            <a href="{% url 'producto_detalle' producto.id %}" class="btn btn-primary w-100 mb-2">Ver más</a>
+            <button onclick="pagar('{{ producto.id }}')" class="btn btn-success w-100">Comprar con Mercado Pago</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p>No hay productos disponibles.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Script para redirigir al Checkout Pro -->
+<script>
+function pagar(producto_id){
+  fetch(`/pagar/${producto_id}`)
+    .then(res => res.json())
+    .then(data => {
+      window.location.href = data.init_point;
+    });
+}
+</script>
+{% endblock %}

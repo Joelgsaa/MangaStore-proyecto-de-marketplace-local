@@ -1,0 +1,43 @@
+<!-- templates/chat/room.html -->
+{% extends 'mercado/base.html' %}
+{% block content %}
+<div class="container">
+  <h4>Chat sobre: {{ conversacion.producto.titulo }}</h4>
+
+  <div id="mensajes" class="border rounded p-3 mb-3" style="height: 320px; overflow-y: auto;">
+    {% for m in mensajes %}
+      <div><b>{{ m.autor.username }}:</b> {{ m.texto }} <small class="text-muted">{{ m.creado }}</small></div>
+    {% endfor %}
+  </div>
+
+  <div class="input-group">
+    <input id="texto" class="form-control" placeholder="Escribí tu mensaje...">
+    <button id="enviar" class="btn btn-primary">Enviar</button>
+  </div>
+</div>
+
+<script>
+  const conversacionId = "{{ conversacion.id }}";
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const socket = new WebSocket(`${wsProtocol}://${window.location.host}/ws/chat/${conversacionId}/`);
+
+  const mensajesDiv = document.getElementById('mensajes');
+  const input = document.getElementById('texto');
+  const btn = document.getElementById('enviar');
+
+  socket.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    const row = document.createElement('div');
+    row.innerHTML = `<b>${data.autor}:</b> ${data.texto} <small class="text-muted">${data.creado}</small>`;
+    mensajesDiv.appendChild(row);
+    mensajesDiv.scrollTop = mensajesDiv.scrollHeight;
+  };
+
+  btn.onclick = () => {
+    const texto = input.value.trim();
+    if (!texto) return;
+    socket.send(JSON.stringify({ texto }));
+    input.value = '';
+  };
+</script>
+{% endblock %}

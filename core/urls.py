@@ -30,5 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)), # rutas API
     path('', include('mercado.urls')), # rutas frontend
+    path('chat/', include('chat.urls')),  # si usás chat
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # para las imagenes
 

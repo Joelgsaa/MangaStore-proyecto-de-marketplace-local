@@ -25,6 +25,7 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">Agregar al carrito</button>
       </form>
+      <a href="{% url 'abrir_chat' producto.id %}" class="btn btn-outline-primary">Chatear con el vendedor</a> <!-- chat -->
     <!-- Botón para pagar con Mercado Pago -->
       <button onclick="pagar('{{ producto.id }}')" class="btn btn-success w-100">Comprar con Mercado Pago</button>
     </div>

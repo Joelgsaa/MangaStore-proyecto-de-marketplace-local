@@ -29,3 +29,6 @@ media/
 
 # Archivos de migración innecesarios (opcional)
 */migrations/__pycache__/
+
+# Carpeta de archivos estáticos recopilados
+staticfiles/

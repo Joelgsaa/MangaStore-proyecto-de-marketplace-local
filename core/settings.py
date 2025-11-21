@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-j+%^uv)9nc!=uz295so^^(#=p^28j30!8@4$q8hvbtku7@pori'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["manga-store.onrender.com"]
 
 
 # Application definition con rest_framework y mercado apps añadidas

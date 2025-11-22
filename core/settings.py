@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url # para la base de datos en render
 import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings') # para que funcione daphne
@@ -85,16 +86,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Configuración para PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'marketplace_db',
-        'USER': 'postgres',
-        'PASSWORD': 'makoto03',
-        'HOST': 'localhost',
-        'PORT': '5432',
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'marketplace_db',
+            'USER': 'postgres',
+            'PASSWORD': 'makoto03',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation

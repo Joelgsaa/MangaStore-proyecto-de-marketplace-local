@@ -29,7 +29,10 @@ SECRET_KEY = 'django-insecure-j+%^uv)9nc!=uz295so^^(#=p^28j30!8@4$q8hvbtku7@pori
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["manga-store.onrender.com"]
+ALLOWED_HOSTS = ["mangastore-z47r.onrender.com",
+                 "localhost",
+                 '127.0.0.1',
+                 ]
 
 
 # Application definition con rest_framework y mercado apps añadidas

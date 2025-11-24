@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-j+%^uv)9nc!=uz295so^^(#=p^28j30!8@4$q8hvbtku7@pori'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ["mangastore-z47r.onrender.com",
                  "localhost",

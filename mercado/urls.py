@@ -3,6 +3,9 @@ from . import views
 from .views import productos_list
 from django.contrib.auth import views as auth_views
 from mercado.views import mercadopago_webhook
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 
 urlpatterns = [
@@ -19,5 +22,8 @@ urlpatterns = [
     path("webhooks/mercadopago/", mercadopago_webhook, name="mercadopago_webhook"),
     path('crear_preferencia/<int:producto_id>/', views.crear_preferencia, name='crear_preferencia'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 # por las dudas: from .views import productos_list, registro

@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import dj_database_url # para la base de datos en render
 import os
+import cloudinary # para cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings') # para que funcione daphne
 
@@ -54,6 +58,9 @@ INSTALLED_APPS = [
     'mercado',
     'channels',
     'chat',
+    'cloudinary',
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
@@ -172,3 +179,12 @@ LOGIN_REDIRECT_URL = '/'
 MERCADOPAGO_ACCESS_TOKEN = "APP_USR-5659062959851911-111509-0e71bcb5ee689dc82553e535bb22b4d9-2992706048"
 
 ASGI_APPLICATION = 'core.asgi.application'
+
+# Configuración de Cloudinary
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('dtm741ylk'),
+    'API_KEY': os.environ.get('128956719634158'),
+    'API_SECRET': os.environ.get('gmCv205jmSH6KLEPi9ghYPBcs7s'),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

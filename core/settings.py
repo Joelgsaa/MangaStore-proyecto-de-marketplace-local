@@ -35,6 +35,10 @@ ALLOWED_HOSTS = ["mangastore-z47r.onrender.com",
                  '127.0.0.1',
                  ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://mangastore-z47r.onrender.com',
+]
+
 
 # Application definition con rest_framework y mercado apps añadidas
 

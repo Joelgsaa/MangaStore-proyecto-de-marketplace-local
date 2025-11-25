@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'chat',
     'cloudinary',
     'cloudinary_storage',
-    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [

@@ -181,9 +181,9 @@ ASGI_APPLICATION = 'core.asgi.application'
 
 # Configuración de Cloudinary
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('dtm741ylk'),
-    'API_KEY': os.environ.get('128956719634158'),
-    'API_SECRET': os.environ.get('gmCv205jmSH6KLEPi9ghYPBcs7s'),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

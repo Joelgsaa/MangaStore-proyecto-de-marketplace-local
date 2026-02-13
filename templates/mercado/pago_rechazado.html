@@ -1,0 +1,37 @@
+{% extends 'mercado/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <span style="font-size: 80px;">&#10060;</span>
+                    </div>
+
+                    <h2 class="text-danger mb-3">Pago Rechazado</h2>
+
+                    <div class="alert alert-danger">
+                        <h5>Detalles</h5>
+                        <p class="mb-1"><strong>ID de transaccion:</strong> {{ pago.transaction_id }}</p>
+                        <p class="mb-1"><strong>Monto:</strong> ${{ pago.monto }}</p>
+                        <p class="mb-0"><strong>Razon:</strong> {{ razon|default:"La transaccion fue rechazada por el banco emisor" }}</p>
+                    </div>
+
+                    <p class="text-muted">
+                        Por favor, intenta con otra tarjeta o contacta a tu banco.
+                    </p>
+
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <a href="{% url 'pago' %}" class="btn btn-warning">
+                            &#128260; Intentar nuevamente
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary">Volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

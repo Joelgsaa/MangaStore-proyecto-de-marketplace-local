@@ -1,0 +1,53 @@
+{% extends 'mercado/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Historial de Pagos</h2>
+
+    {% if pagos %}
+    <div class="table-responsive">
+        <table class="table table-hover shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Transaction ID</th>
+                    <th>Monto</th>
+                    <th>Tarjeta</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pago in pagos %}
+                <tr>
+                    <td>{{ pago.fecha|date:"d/m/Y H:i" }}</td>
+                    <td><code>{{ pago.transaction_id }}</code></td>
+                    <td>${{ pago.monto }}</td>
+                    <td>
+                        {% if pago.tipo_tarjeta == 'visa' %}💳 Visa{% endif %}
+                        {% if pago.tipo_tarjeta == 'mastercard' %}💳 Mastercard{% endif %}
+                        {% if pago.tipo_tarjeta == 'amex' %}💳 Amex{% endif %}
+                        **** {{ pago.ultimos_digitos }}
+                    </td>
+                    <td>
+                        {% if pago.estado == 'aprobado' %}
+                        <span class="badge bg-success">Aprobado</span>
+                        {% elif pago.estado == 'rechazado' %}
+                        <span class="badge bg-danger">Rechazado</span>
+                        {% else %}
+                        <span class="badge bg-warning">Pendiente</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No tienes pagos registrados aun.
+    </div>
+    {% endif %}
+
+    <a href="/" class="btn btn-outline-primary mt-3">Volver al inicio</a>
+</div>
+{% endblock %}

@@ -1,18 +1,49 @@
-<!-- templates/chat/room.html -->
 {% extends 'mercado/base.html' %}
-{% block content %}
-<div class="container">
-  <h4>Chat sobre: {{ conversacion.producto.titulo }}</h4>
 
-  <div id="mensajes" class="border rounded p-3 mb-3" style="height: 320px; overflow-y: auto;">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <div class="chat-header">
+    <a href="{% url 'producto_detalle' conversacion.producto.id %}" class="product-link">
+      <img src="{{ conversacion.producto.imagen.url }}" class="product-thumb" alt="{{ conversacion.producto.titulo }}">
+    </a>
+    <div class="header-info">
+      <h6 class="mb-0">{{ conversacion.producto.titulo }}</h6>
+      <small>
+        {% if conversacion.vendedor == request.user %}
+          Comprador: {{ conversacion.comprador.username }}
+        {% else %}
+          Vendedor: {{ conversacion.vendedor.username }}
+        {% endif %}
+      </small>
+      <div id="online-indicator" class="online-indicator">
+        <span class="dot"></span> <span id="online-text">Conectando...</span>
+      </div>
+    </div>
+    <a href="{% url 'chat_lista' %}" class="btn btn-sm btn-outline-light ms-auto">📋 Chats</a>
+  </div>
+
+  <div id="mensajes" class="messages-area">
     {% for m in mensajes %}
-      <div><b>{{ m.autor.username }}:</b> {{ m.texto }} <small class="text-muted">{{ m.creado }}</small></div>
+      <div class="message {% if m.autor == request.user %}sent{% else %}received{% endif %}">
+        <div class="bubble">{{ m.texto }}</div>
+        <small class="time">{{ m.creado|date:"H:i" }}</small>
+      </div>
+    {% empty %}
+      <div class="no-messages">
+        <p>No hay mensajes aún. ¡Inicia la conversación!</p>
+      </div>
     {% endfor %}
   </div>
 
-  <div class="input-group">
-    <input id="texto" class="form-control" placeholder="Escribí tu mensaje...">
-    <button id="enviar" class="btn btn-primary">Enviar</button>
+  <div class="chat-input">
+    <input id="texto" type="text" class="form-control" placeholder="Escribe tu mensaje..." autocomplete="off">
+    <button id="enviar" class="btn btn-primary">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+    </button>
   </div>
 </div>
 
@@ -20,24 +51,74 @@
   const conversacionId = "{{ conversacion.id }}";
   const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
   const socket = new WebSocket(`${wsProtocol}://${window.location.host}/ws/chat/${conversacionId}/`);
-
+  
   const mensajesDiv = document.getElementById('mensajes');
   const input = document.getElementById('texto');
   const btn = document.getElementById('enviar');
-
+  const onlineIndicator = document.getElementById('online-indicator');
+  const onlineText = document.getElementById('online-text');
+  
+  socket.onopen = () => {
+    onlineText.textContent = 'En línea';
+    onlineIndicator.classList.add('online');
+  };
+  
+  socket.onclose = () => {
+    onlineText.textContent = 'Desconectado';
+    onlineIndicator.classList.remove('online');
+  };
+  
+  socket.onerror = () => {
+    onlineText.textContent = 'Error de conexión';
+  };
+  
   socket.onmessage = (e) => {
     const data = JSON.parse(e.data);
+    
+    if (data.type === 'online_status') {
+      if (data.online) {
+        onlineText.textContent = data.user + ' está en línea';
+      } else {
+        onlineText.textContent = data.user + ' se desconectó';
+      }
+      return;
+    }
+    
+    if (data.type === 'user_connected') {
+      onlineText.textContent = data.user + ' se unió';
+      return;
+    }
+    
     const row = document.createElement('div');
-    row.innerHTML = `<b>${data.autor}:</b> ${data.texto} <small class="text-muted">${data.creado}</small>`;
+    row.className = `message ${data.autor === '{{ request.user.username }}' ? 'sent' : 'received'}`;
+    
+    const date = new Date(data.creado);
+    const timeStr = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    
+    row.innerHTML = `<div class="bubble">${escapeHtml(data.texto)}</div><small class="time">${timeStr}</small>`;
     mensajesDiv.appendChild(row);
     mensajesDiv.scrollTop = mensajesDiv.scrollHeight;
   };
-
-  btn.onclick = () => {
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  btn.onclick = () => enviarMensaje();
+  
+  input.onkeypress = (e) => {
+    if (e.key === 'Enter') enviarMensaje();
+  };
+  
+  function enviarMensaje() {
     const texto = input.value.trim();
-    if (!texto) return;
+    if (!texto || socket.readyState !== WebSocket.OPEN) return;
     socket.send(JSON.stringify({ texto }));
     input.value = '';
-  };
+  }
+  
+  mensajesDiv.scrollTop = mensajesDiv.scrollHeight;
 </script>
 {% endblock %}

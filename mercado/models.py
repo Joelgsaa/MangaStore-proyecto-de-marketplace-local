@@ -28,3 +28,26 @@ class Carrito(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
 
+class Pago(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('aprobado', 'Aprobado'),
+        ('rechazado', 'Rechazado'),
+    ]
+
+    TARJETA_CHOICES = [
+        ('visa', 'Visa'),
+        ('mastercard', 'Mastercard'),
+        ('amex', 'American Express'),
+    ]
+    
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    tipo_tarjeta = models.CharField(max_length=20, choices=TARJETA_CHOICES)
+    ultimos_digitos = models.CharField(max_length=4)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    transaction_id = models.CharField(max_length=100, unique=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Pago {self.transaction_id} - {self.estado}"

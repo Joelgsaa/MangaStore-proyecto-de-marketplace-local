@@ -1,0 +1,60 @@
+{% extends 'mercado/base.html' %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">💬 Mis Conversaciones</h3>
+  
+  {% if conversaciones %}
+    <div class="conversations-list">
+      {% for c in conversaciones %}
+        <a href="{% url 'chat_room' c.id %}" class="conversation-item">
+          <div class="conv-header">
+            <img src="{{ c.producto.imagen.url }}" class="product-thumb" alt="{{ c.producto.titulo }}">
+            <div class="conv-info">
+              <div class="conv-title">
+                <strong>{{ c.producto.titulo }}</strong>
+                {% if c.producto.precio %}
+                  <span class="price">${{ c.producto.precio }}</span>
+                {% endif %}
+              </div>
+              <p class="last-message">
+                {% with last_msg=c.mensajes.last %}
+                  {% if last_msg %}
+                    <strong>{{ last_msg.autor.username }}:</strong> {{ last_msg.texto|truncatechars:50 }}
+                  {% else %}
+                    <em>Sin mensajes</em>
+                  {% endif %}
+                {% endwith %}
+              </p>
+            </div>
+          </div>
+          <div class="conv-meta">
+            <small class="time">{{ c.creada|date:"d/m H:i" }}</small>
+            <div class="participants">
+              {% if c.comprador == request.user %}
+                <span class="badge bg-primary">Comprador</span>
+              {% else %}
+                <span class="badge bg-success">Vendedor</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <h5>No tienes conversaciones aún</h5>
+      <p>Cuando chatees con un vendedor o comprador, verás tus conversaciones aquí.</p>
+      <a href="{% url 'productos_list' %}" class="btn btn-primary">Ver productos</a>
+    </div>
+  {% endif %}
+  
+  <a href="{% url 'productos_list' %}" class="btn btn-outline-secondary mt-3">
+    ← Volver a productos
+  </a>
+</div>
+{% endblock %}

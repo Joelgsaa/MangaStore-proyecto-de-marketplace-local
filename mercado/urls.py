@@ -21,9 +21,13 @@ urlpatterns = [
     path("pago/<int:producto_id>/", views.create_preference, name="crear-preferencia"),
     path("webhooks/mercadopago/", mercadopago_webhook, name="mercadopago_webhook"),
     path('crear_preferencia/<int:producto_id>/', views.crear_preferencia, name='crear_preferencia'),
+    path('pago/', views.pago, name='pago'),
+    path('procesar-pago/', views.procesar_pago, name='procesar_pago'),
+    path('pago/exitoso/<int:pago_id>/', views.pago_exitoso, name='pago_exitoso'),
+    path('historial-pagos/', views.historial_pagos, name='historial_pagos'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-# por las dudas: from .views import productos_list, registro
+# por las dudas: from .views import productos_list, registro path('pago/rechazado/', views.pago_rechazado_demo, name='pago_rechazado'),

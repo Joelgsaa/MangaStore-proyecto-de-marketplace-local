@@ -27,4 +27,16 @@
 
 <p><strong>Total:</strong> ${{ total }}</p>
 
+<!-- En el carrito.html, después de mostrar el total -->
+<div class="card-footer">
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Total: ${{ total }}</h4>
+        <div class="d-flex gap-2">
+            <a href="{% url 'pago' %}" class="btn btn-success btn-lg">
+                💳 Pago
+            </a>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

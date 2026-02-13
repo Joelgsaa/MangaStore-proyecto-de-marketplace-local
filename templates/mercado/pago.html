@@ -1,0 +1,162 @@
+{% extends 'mercado/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">💳 Realizacion de Pago</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Resumen del pedido -->
+                    <div class="alert alert-info mb-4">
+                        <h5>Resumen del Pedido</h5>
+                        {% for item in items %}
+                        <div class="d-flex justify-content-between">
+                            <span>{{ item.producto.titulo }} (x{{ item.cantidad }})</span>
+                            <span>${{ item.producto.precio }}</span>
+                        </div>
+                        {% endfor %}
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total:</span>
+                            <span>${{ total }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulario de tarjeta -->
+                    <form method="POST" id="pagoForm">
+                        {% csrf_token %}
+                        
+                        <!-- Selector de tarjeta -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Tarjeta</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tipo" 
+                                           id="visa" value="visa" checked>
+                                    <label class="form-check-label" for="visa">
+                                        💳 Visa
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tipo" 
+                                           id="mastercard" value="mastercard">
+                                    <label class="form-check-label" for="mastercard">
+                                        💳 Mastercard
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="tipo" 
+                                           id="amex" value="amex">
+                                    <label class="form-check-label" for="amex">
+                                        💳 American Express
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Número de tarjeta -->
+                        <div class="mb-3">
+                            <label for="numero_tarjeta" class="form-label">Número de Tarjeta</label>
+                            <input type="text" class="form-control" id="numero_tarjeta" 
+                                   name="numero_tarjeta" placeholder="1234 5678 9012 3456" 
+                                   maxlength="19" required>
+                            <div class="form-text">
+                                Tarjetas de prueba:<br>
+                                Visa: 4000 0566 5566 5556<br>
+                                Mastercard: 5200 0000 0000 0007<br>
+                                Amex: 3782 8224 6310 0005<br>
+                                <em>Termina en 0000 para simular rechazo</em>
+                            </div>
+                        </div>
+                        
+                        <!-- Nombre titular -->
+                        <div class="mb-3">
+                            <label for="nombre_titular" class="form-label">Nombre del Titular</label>
+                            <input type="text" class="form-control" id="nombre_titular" 
+                                   name="nombre_titular" placeholder="JUAN PEREZ" required>
+                        </div>
+                        
+                        <!-- Fecha y CVV -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="vencimiento" class="form-label">Vencimiento</label>
+                                <input type="text" class="form-control" id="vencimiento" 
+                                       name="vencimiento" placeholder="MM/AA" maxlength="5" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" 
+                                       name="cvv" placeholder="123" maxlength="4" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading spinner (oculto por defecto) -->
+                        <div id="loadingSpinner" class="text-center mb-3" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Procesando...</span>
+                            </div>
+                            <p class="mt-2">Procesando pago...</p>
+                        </div>
+                        
+                        <!-- Botón de pagar -->
+                        <button type="submit" class="btn btn-success w-100 btn-lg" id="pagarBtn">
+                            Pagar ${{ total }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para formatting y validación -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cardInput = document.getElementById('numero_tarjeta');
+    const expiryInput = document.getElementById('vencimiento');
+    const form = document.getElementById('pagoForm');
+    const spinner = document.getElementById('loadingSpinner');
+    const btn = document.getElementById('pagarBtn');
+    
+    // Format número de tarjeta (espacios cada 4 dígitos)
+    cardInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
+        e.target.value = formatted;
+    });
+    
+    // Format vencimiento (MM/AA)
+    expiryInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2);
+        }
+        e.target.value = value;
+    });
+    
+    // Mostrar spinner al enviar
+    form.addEventListener('submit', function(e) {
+        // Validar longitud de tarjeta
+        let cardNum = cardInput.value.replace(/\s/g, '');
+        let tipo = document.querySelector('input[name="tipo"]:checked').value;
+        
+        if (tipo === 'amex' && cardNum.length !== 15) {
+            alert('American Express debe tener 15 dígitos');
+            e.preventDefault();
+            return;
+        } else if (cardNum.length !== 16) {
+            alert('La tarjeta debe tener 16 dígitos');
+            e.preventDefault();
+            return;
+        }
+        
+        spinner.style.display = 'block';
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
+    });
+});
+</script>
+{% endblock %}

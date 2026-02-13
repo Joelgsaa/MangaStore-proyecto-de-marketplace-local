@@ -1,0 +1,39 @@
+{% extends 'mercado/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <span style="font-size: 80px;">&#10004;</span>
+                    </div>
+
+                    <h2 class="text-success mb-3">Pago Aprobado</h2>
+
+                    <div class="alert alert-success">
+                        <h5>Detalles de la Transaccion</h5>
+                        <p class="mb-1"><strong>ID de transaccion:</strong> {{ pago.transaction_id }}</p>
+                        <p class="mb-1"><strong>Monto:</strong> ${{ pago.monto }}</p>
+                        <p class="mb-1"><strong>Tarjeta:</strong> **** {{ pago.ultimos_digitos }}</p>
+                        <p class="mb-0"><strong>Fecha:</strong> {{ pago.fecha }}</p>
+                    </div>
+
+                    <p class="text-muted">
+                        Tu pago ha sido procesado exitosamente.
+                        Recibiras un correo de confirmacion.
+                    </p>
+
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <a href="/" class="btn btn-primary">Volver al inicio</a>
+                        <a href="{% url 'historial_pagos' %}" class="btn btn-outline-secondary">
+                            Ver historial de pagos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
